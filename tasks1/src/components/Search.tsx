@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from "react";
 
-import { searchSpaces } from "../service/search";
 import useDebounce from "../useDebounce";
 
 interface State {
-  name: string;
+  name?: string;
+  address?: string;
+  country?: string;
 }
 
-export default () => {
+interface Props {
+  api: (searchText: string) => Promise<State[]>;
+}
+
+const Search: React.FC<Props> = ({ api }) => {
   const [spaces, setSpaces] = useState<State[]>([]);
   const [query, setQuery] = useState("");
   const [error, setError] = useState(false);
@@ -18,12 +23,12 @@ export default () => {
     setQuery(e.target.value);
 
   useEffect(() => {
-      searchSpaces(debouncedQuery)
-        .then((res) => {
-          setSpaces(res);
-          setError(false);
-        })
-        .catch(() => setError(true));
+    api(debouncedQuery)
+      .then((res) => {
+        setSpaces(res);
+        setError(false);
+      })
+      .catch(() => setError(true));
   }, [debouncedQuery]);
 
   return (
@@ -31,9 +36,20 @@ export default () => {
       <input type="text" onChange={onChange} />
       {error && <h4>Something went wrong</h4>}
       {spaces.map((space) => {
-        const { name } = space;
-        return <p key={name}>{name}</p>;
+        if (space.name) {
+          const { name } = space;
+          return <p key={name}>{name}</p>;
+        } else {
+          const { address, country } = space;
+          return (
+            <p key={address}>
+              {address} {country}
+            </p>
+          );
+        }
       })}
     </div>
   );
 };
+
+export default Search;

@@ -1,8 +1,6 @@
 import { range, random } from "lodash";
 
-type Results = {
-  addresses: Address[];
-};
+type Results = Address[];
 
 type Address = {
   address: string;
@@ -32,8 +30,8 @@ const searchSpaces = (searchText: string): Promise<Results> => {
   return new Promise((res, rej) => {
     setTimeout(() => {
       if (random() > CHANCE_OF_FAILURE) {
-        const addresses = ALL_ADDRESSES.filter(({ address }) =>
-          address.indexOf(searchText) !== -1
+        const addresses = ALL_ADDRESSES.filter(
+          ({ address }) => address.indexOf(searchText) !== -1
         );
         res(addresses);
       } else {
