@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import { searchSpaces } from "../service/search";
+import useDebounce from "../useDebounce";
 
 interface State {
   name: string;
@@ -11,21 +12,23 @@ export default () => {
   const [query, setQuery] = useState("");
   const [error, setError] = useState(false);
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+  const debouncedQuery = useDebounce(query, 500);
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>): void =>
     setQuery(e.target.value);
 
   useEffect(() => {
-    searchSpaces(query)
-      .then((res) => {
-        setSpaces(res);
-        setError(false);
-      })
-      .catch(() => setError(true));
-  }, [query]);
+      searchSpaces(debouncedQuery)
+        .then((res) => {
+          setSpaces(res);
+          setError(false);
+        })
+        .catch(() => setError(true));
+  }, [debouncedQuery]);
 
   return (
     <div>
-      <input type="text" value={query} onChange={onChange} />
+      <input type="text" onChange={onChange} />
       {error && <h4>Something went wrong</h4>}
       {spaces.map((space) => {
         const { name } = space;

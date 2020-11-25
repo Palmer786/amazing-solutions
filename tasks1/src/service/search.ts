@@ -19,8 +19,6 @@ const generateSpaces = (text: string, numbers: number[]): Space[] =>
       name: `${text} ${index}`,
     }));
 
-
-
 const ALL_PARKING_SPACES: Space[] = [
   ...generateSpaces("Kraków HQ", generateNumbers(1, 20)),
   ...generateSpaces("Milano", generateNumbers(21, 50)),
